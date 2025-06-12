@@ -6,6 +6,7 @@ import {
     updateCustomerController,
     deleteCustomerController
 } from "./customer.controller"; 
+import { adminRoleAuth, checkRoles } from "../middleware/bearAuth";
 
 export const customer = (app: Express) => {
     app.route("/customer").post(
@@ -19,6 +20,7 @@ export const customer = (app: Express) => {
     );
 
     app.route("/customer").get(
+        checkRoles("admin"),
         async (req, res, next) => {
             try {
                 await getAllCustomersController(req, res);

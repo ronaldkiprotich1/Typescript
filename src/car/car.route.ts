@@ -6,6 +6,7 @@ import {
   updateCarController,
   deleteCarController,
 } from "./car.controller";
+import { checkRoles } from "../middleware/bearAuth";
 
 export const car = (app: Express) => {
   app.route("/cars").post(
@@ -19,6 +20,8 @@ export const car = (app: Express) => {
   );
 
   app.route("/cars").get(
+    checkRoles("admin"),
+
     async (req, res, next) => {
       try {
         await getAllCarsController(req, res);
