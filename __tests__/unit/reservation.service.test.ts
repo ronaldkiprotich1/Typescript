@@ -1,13 +1,13 @@
 import { eq } from "drizzle-orm";
-import db from "../src/Drizzle/db";
-import { ReservationTable, TIReservation } from "../src/Drizzle/schema";
+import db from "../../src/Drizzle/db";
+import { ReservationTable, TIReservation } from "../../src/Drizzle/schema";
 import {
   createReservationService,
   getReservationService,
   getAllReservationsService,
   updateReservationService,
   deleteReservationService,
-} from "../src/reservation/reservation.service";
+} from "../../src/reservation/reservation.service";
 
 jest.mock("../src/Drizzle/db", () => ({
   __esModule: true,

@@ -20,6 +20,8 @@ export const car = (app: Express) => {
   );
 
   app.route("/cars").get(
+    
+
     checkRoles("admin"),
 
     async (req, res, next) => {

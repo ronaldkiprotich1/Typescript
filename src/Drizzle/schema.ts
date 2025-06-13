@@ -3,57 +3,29 @@ import {
  pgTable, serial, varchar,integer,decimal,date, boolean } 
   from "drizzle-orm/pg-core";
 import { pgEnum } from "drizzle-orm/pg-core";
-// ----------------------------
-// Role Enum
-// ----------------------------
 export const RoleEnum = pgEnum("role", ["admin", "user"]);
-
-// ----------------------------
-// User Table
-// import { pgTable, serial, varchar, boolean } from "drizzle-orm/pg-core";
-// import { pgEnum } from "drizzle-orm/pg-core";
-
-// // Define role enum as an actual database enum
-// export const RoleEnum = pgEnum("role", ["admin", "user"]);
-
-// export const UsersTable = pgTable("users", {
-//   id: serial("id").primaryKey(),
-//   email: varchar("email", { length: 100 }).notNull().unique(),
-//   password: varchar("password", { length: 255 }).notNull(),
-//   firstName: varchar("first_name", { length: 50 }).notNull(),
-//   lastName: varchar("last_name", { length: 50 }).notNull(),
-//   isVerified: boolean("is_verified").default(false),
-//   verificationCode: varchar("verification_code", { length: 10 }),
-//   role: RoleEnum("role").notNull().default("user")
-// });
-
-// ----------------------------
 export const UsersTable = pgTable("users", {
   id: serial("id").primaryKey(),
   email: varchar("email", { length: 100 }).notNull().unique(),
   password: varchar("password", { length: 255 }).notNull(),
-  firstName: varchar("first_name", { length: 50 }).notNull(),
-  lastName: varchar("last_name", { length: 50 }).notNull(),
+  firstName: varchar("firstName", { length: 50 }).notNull(),
+  lastName: varchar("lastName", { length: 50 }).notNull(),
   isVerified: boolean("is_verified").default(false),
   verificationCode: varchar("verification_code", { length: 10 }),
   role: RoleEnum("role").notNull().default("user")
 });
 
-// ----------------------------
-// Customer Table
-// ----------------------------
+
 export const CustomerTable = pgTable("customer", {
   customerID: serial("customerID").primaryKey(),
-  firstName: varchar("first_name", { length: 50 }).notNull(),
-  lastName: varchar("last_name", { length: 50 }).notNull(),
+  firstName: varchar("firstName", { length: 50 }).notNull(),
+  lastName: varchar("lastName", { length: 50 }).notNull(),
   email: varchar("email", { length: 100 }).notNull().unique(),
   phoneNumber: varchar("phone_number", { length: 15 }),
   address: varchar("address", { length: 255 })
 });
 
-// ----------------------------
-// Location Table
-// ----------------------------
+
 export const LocationTable = pgTable("location", {
   locationID: serial("LocationID").primaryKey(),
   locationName: varchar("LocationName", { length: 100 }).notNull(),
@@ -61,9 +33,7 @@ export const LocationTable = pgTable("location", {
   contactNumber: varchar("ContactNumber", { length: 20 })
 });
 
-// ----------------------------
-// Car Table
-// ----------------------------
+
 export const CarTable = pgTable("car", {
   carID: serial("CarID").primaryKey(),
   carModel: varchar("CarModel", { length: 100 }).notNull(),

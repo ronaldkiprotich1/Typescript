@@ -20,8 +20,8 @@ CREATE TABLE "car" (
 --> statement-breakpoint
 CREATE TABLE "customer" (
 	"customerID" serial PRIMARY KEY NOT NULL,
-	"first_name" varchar(50) NOT NULL,
-	"last_name" varchar(50) NOT NULL,
+	"firstName" varchar(50) NOT NULL,
+	"lastName" varchar(50) NOT NULL,
 	"email" varchar(100) NOT NULL,
 	"phone_number" varchar(15),
 	"address" varchar(255),
@@ -73,8 +73,8 @@ CREATE TABLE "users" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"email" varchar(100) NOT NULL,
 	"password" varchar(255) NOT NULL,
-	"first_name" varchar(50) NOT NULL,
-	"last_name" varchar(50) NOT NULL,
+	"firstName" varchar(50) NOT NULL,
+	"lastName" varchar(50) NOT NULL,
 	"is_verified" boolean DEFAULT false,
 	"verification_code" varchar(10),
 	"role" "role" DEFAULT 'user' NOT NULL,

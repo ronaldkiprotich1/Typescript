@@ -1,13 +1,13 @@
 import { eq, sql } from "drizzle-orm";
-import db from "../src/Drizzle/db";
-import { CarTable, TICar } from "../src/Drizzle/schema";
+import db from "../../src/Drizzle/db";
+import { CarTable, TICar } from "../../src/Drizzle/schema";
 import {
   createCarService,
   getCarService,
   getAllCarsService,
   updateCarService,
   deleteCarService,
-} from "../src/car/car.service";
+} from "../../src/car/car.service";
 
 // Mock the Drizzle module
 jest.mock("../src/Drizzle/db", () => ({

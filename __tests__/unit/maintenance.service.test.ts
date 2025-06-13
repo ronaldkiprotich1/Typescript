@@ -1,6 +1,6 @@
 import { eq, sql } from "drizzle-orm";
-import db from "../src/Drizzle/db";
-import { MaintenanceTable, CarTable, LocationTable, TIMaintenance } from "../src/Drizzle/schema";
+import db from "../../src/Drizzle/db";
+import { MaintenanceTable, CarTable, LocationTable, TIMaintenance } from "../../src/Drizzle/schema";
 import {
     createMaintenanceService,
     getMaintenanceService,
@@ -8,7 +8,7 @@ import {
     updateMaintenanceService,
     deleteMaintenanceService,
     getCarMaintenanceHistory,
-} from "../src/maintenance/maintenance.service";
+} from "../../src/maintenance/maintenance.service";
 
 jest.mock("../src/Drizzle/db", () => ({
     __esModule: true,

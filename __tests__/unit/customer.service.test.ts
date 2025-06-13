@@ -1,13 +1,13 @@
 import { eq, sql } from "drizzle-orm";
-import db from "../src/Drizzle/db";
+import db from "../../src/Drizzle/db";
 import {
   createCustomerService,
   getCustomerService,
   getAllCustomersService,
   updateCustomerService,
   deleteCustomerService,
-} from "../src/customer/customer.service";
-import { CustomerTable, TICustomer } from "../src/Drizzle/schema";
+} from "../../src/customer/customer.service";
+import { CustomerTable, TICustomer } from "../../src/Drizzle/schema";
 
 jest.mock("../src/Drizzle/db", () => ({
   __esModule: true,

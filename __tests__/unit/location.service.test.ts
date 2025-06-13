@@ -1,13 +1,13 @@
 import { eq } from "drizzle-orm";
-import db from "../src/Drizzle/db";
+import db from "../../src/Drizzle/db";
 import {
   createLocationService,
   getLocationService,
   getAllLocationsService,
   updateLocationService,
   deleteLocationService,
-} from "../src/location/location.service";
-import { LocationTable, TILocation } from "../src/Drizzle/schema";
+} from "../../src/location/location.service";
+import { LocationTable, TILocation } from "../../src/Drizzle/schema";
 
 // Mock the entire Drizzle module
 jest.mock("../src/Drizzle/db", () => ({

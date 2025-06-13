@@ -102,8 +102,8 @@ export const loginUserController = async (req: Request, res: Response) => {
         const payload = {
             sub: userExist.id,
             user_id: userExist.id,
-            first_name: userExist.firstName,
-            last_name: userExist.lastName,
+            firstName: userExist.firstName,
+            lastName: userExist.lastName,
             role: userExist.role,
             exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24
         }
@@ -121,8 +121,8 @@ export const loginUserController = async (req: Request, res: Response) => {
             token,
             user: {
                 user_id: userExist.id,
-                first_name: userExist.firstName,
-                last_name: userExist.lastName,
+                firstName: userExist.firstName,
+                lastName: userExist.lastName,
                 email: userExist.email,
                 role: userExist.role
             }

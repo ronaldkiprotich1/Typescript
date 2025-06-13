@@ -1,13 +1,13 @@
 import { sql } from "drizzle-orm";
-import db from "../src/Drizzle/db";
-import { InsuranceTable, TIInsurance } from "../src/Drizzle/schema";
+import db from "../../src/Drizzle/db";
+import { InsuranceTable, TIInsurance } from "../../src/Drizzle/schema";
 import {
   createInsuranceService,
   getInsuranceService,
   getAllInsurancesService,
   updateInsuranceService,
   deleteInsuranceService,
-} from "../src/insurance/insurance.service";
+} from "../../src/insurance/insurance.service";
 
 jest.mock("../src/Drizzle/db", () => ({
   __esModule: true,

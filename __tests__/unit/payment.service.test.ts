@@ -1,5 +1,5 @@
 import { eq } from "drizzle-orm";
-import db from "../src/Drizzle/db";
+import db from "../../src/Drizzle/db";
 import {
   createPaymentService,
   getPaymentService,
@@ -7,8 +7,8 @@ import {
   updatePaymentService,
   deletePaymentService,
   getReservationPaymentsService,
-} from "../src/payment/payment.service";
-import { PaymentTable, TIPayment } from "../src/Drizzle/schema";
+} from "../../src/payment/payment.service";
+import { PaymentTable, TIPayment } from "../../src/Drizzle/schema";
 
 jest.mock("../src/Drizzle/db", () => ({
   __esModule: true,

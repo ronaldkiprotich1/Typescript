@@ -12,7 +12,7 @@ const user = (app: Express) => {
                 next(error)
             }
 
-        }
+        } 
     )
 
     // verify user route

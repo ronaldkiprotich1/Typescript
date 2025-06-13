@@ -12,12 +12,15 @@ import { userRoleAuth } from "./middleware/bearAuth"
 import user from "./auth/auth.router"
 
 // Load environment variables
-dotenv.config()
+
+const initializeApp =()=>{
+  dotenv.config()
+
 
 const app = express()
 app.use(express.json())
 
-const port = process.env.PORT || 5000
+
 
 app.get('/', (req, res) => {
   res.send("hello")
@@ -47,6 +50,8 @@ insurance(app)
 car(app)
 user(app)
 
+return(app)
+
 
 // Optional: database connection check example if you have db instance
 /*
@@ -63,13 +68,18 @@ async function checkDatabase() {
 */
 
 // Start server
-app.listen(port, async () => {
-  // await checkDatabase()  // uncomment if you add DB check
-  console.log(`server is running on http://localhost:${port}`)
-})
+
 // import authRoutes from "./auth/auth.route";
 
 // // ... other imports and setup
 
 // // Register auth routes
 // app.use("/auth", authRoutes);
+
+
+
+
+}
+const app = initializeApp()
+export default app
+
