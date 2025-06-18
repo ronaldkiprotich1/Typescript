@@ -1,11 +1,13 @@
-// location.test.ts
 import request from "supertest";
-import app from "../../src/index"; 
+import app from "../../src/index";
 import db from "../../src/Drizzle/db";
 import { LocationTable } from "../../src/Drizzle/schema";
+import { eq } from "drizzle-orm";
+
+let locationId: number;
 
 beforeEach(async () => {
-  await db.delete(LocationTable); // Reset the location table before each test
+  await db.delete(LocationTable);
 });
 
 describe("Location Integration Tests", () => {
@@ -22,8 +24,8 @@ describe("Location Integration Tests", () => {
     });
 
     it("should return 500 if service throws error", async () => {
-      const original = db.insert;
-      db.insert = () => { throw new Error("DB error") };
+      const originalInsert = db.insert;
+      db.insert = () => { throw new Error("DB error"); };
 
       const res = await request(app).post("/location").send({
         locationName: "Fail",
@@ -34,17 +36,22 @@ describe("Location Integration Tests", () => {
       expect(res.status).toBe(500);
       expect(res.body.message).toBe("DB error");
 
-      db.insert = original; // Restore
+      db.insert = originalInsert;
     });
   });
 
   describe("GET /location", () => {
     it("should retrieve all locations", async () => {
-      await db.insert(LocationTable).values({ locationName: "Mombasa", address: "Beach Rd" });
+      await db.insert(LocationTable).values({
+        locationName: "Mombasa",
+        address: "Beach Rd",
+        contactNumber: null,
+      });
 
       const res = await request(app).get("/location");
 
       expect(res.status).toBe(200);
+      expect(Array.isArray(res.body.locations)).toBe(true);
       expect(res.body.locations.length).toBeGreaterThan(0);
     });
 
@@ -55,25 +62,30 @@ describe("Location Integration Tests", () => {
     });
 
     it("should handle internal server error", async () => {
-      const original = db.query.LocationTable.findMany;
+      const originalFindMany = db.query.LocationTable.findMany;
       // @ts-ignore
-      db.query.LocationTable.findMany = () => { throw new Error("Failure") };
+      db.query.LocationTable.findMany = () => { throw new Error("Failure"); };
 
       const res = await request(app).get("/location");
       expect(res.status).toBe(500);
       expect(res.body.message).toBe("Internal server error");
 
-      db.query.LocationTable.findMany = original;
+      db.query.LocationTable.findMany = originalFindMany;
     });
   });
 
   describe("GET /location/:id", () => {
-    it("should get a location by ID", async () => {
-      const [loc] = await db.insert(LocationTable)
-        .values({ locationName: "Kisumu", address: "Kisumu Rd" })
-        .returning();
+    beforeEach(async () => {
+      const [loc] = await db.insert(LocationTable).values({
+        locationName: "Kisumu",
+        address: "Kisumu Rd",
+        contactNumber: null,
+      }).returning();
+      locationId = loc.locationID;
+    });
 
-      const res = await request(app).get(`/location/${loc.locationID}`);
+    it("should get a location by ID", async () => {
+      const res = await request(app).get(`/location/${locationId}`);
       expect(res.status).toBe(200);
       expect(res.body.location.locationName).toBe("Kisumu");
     });
@@ -91,26 +103,31 @@ describe("Location Integration Tests", () => {
     });
 
     it("should handle internal server error", async () => {
-      const original = db.query.LocationTable.findFirst;
+      const originalFindFirst = db.query.LocationTable.findFirst;
       // @ts-ignore
-      db.query.LocationTable.findFirst = () => { throw new Error("Failure") };
+      db.query.LocationTable.findFirst = () => { throw new Error("Failure"); };
 
-      const res = await request(app).get("/location/1");
+      const res = await request(app).get(`/location/${locationId}`);
       expect(res.status).toBe(500);
       expect(res.body.message).toBe("Internal server error");
 
-      db.query.LocationTable.findFirst = original;
+      db.query.LocationTable.findFirst = originalFindFirst;
     });
   });
 
   describe("PUT /location/:id", () => {
-    it("should update a location", async () => {
-      const [loc] = await db.insert(LocationTable)
-        .values({ locationName: "Eldoret", address: "Uasin Gishu" })
-        .returning();
+    beforeEach(async () => {
+      const [loc] = await db.insert(LocationTable).values({
+        locationName: "Eldoret",
+        address: "Uasin Gishu",
+        contactNumber: null,
+      }).returning();
+      locationId = loc.locationID;
+    });
 
+    it("should update a location", async () => {
       const res = await request(app)
-        .put(`/location/${loc.locationID}`)
+        .put(`/location/${locationId}`)
         .send({ locationName: "Eldoret Town", address: "Updated Address" });
 
       expect(res.status).toBe(200);
@@ -125,24 +142,21 @@ describe("Location Integration Tests", () => {
 
     it("should return 404 if location not found", async () => {
       const res = await request(app).put("/location/9999").send({
-        locationName: "Ghost Town", address: "Nowhere"
+        locationName: "Ghost Town",
+        address: "Nowhere",
       });
       expect(res.status).toBe(404);
       expect(res.body.message).toBe("Location not found");
     });
 
     it("should handle internal error", async () => {
-      const [loc] = await db.insert(LocationTable)
-        .values({ locationName: "Temp", address: "Test" })
-        .returning();
-
       const spy = jest.spyOn(db, "update").mockImplementation(() => {
         throw new Error("Crash");
       });
 
-      const res = await request(app).put(`/location/${loc.locationID}`).send({
+      const res = await request(app).put(`/location/${locationId}`).send({
         locationName: "Crash",
-        address: "Error"
+        address: "Error",
       });
 
       expect(res.status).toBe(500);
@@ -153,12 +167,17 @@ describe("Location Integration Tests", () => {
   });
 
   describe("DELETE /location/:id", () => {
-    it("should delete a location", async () => {
-      const [loc] = await db.insert(LocationTable)
-        .values({ locationName: "DeleteMe", address: "Bye" })
-        .returning();
+    beforeEach(async () => {
+      const [loc] = await db.insert(LocationTable).values({
+        locationName: "DeleteMe",
+        address: "Bye",
+        contactNumber: null,
+      }).returning();
+      locationId = loc.locationID;
+    });
 
-      const res = await request(app).delete(`/location/${loc.locationID}`);
+    it("should delete a location", async () => {
+      const res = await request(app).delete(`/location/${locationId}`);
       expect(res.status).toBe(200);
       expect(res.body.message).toBe("Location deleted successfully");
     });
@@ -176,15 +195,11 @@ describe("Location Integration Tests", () => {
     });
 
     it("should handle internal error", async () => {
-      const [loc] = await db.insert(LocationTable)
-        .values({ locationName: "ToDelete", address: "Boom" })
-        .returning();
-
       const spy = jest.spyOn(db, "delete").mockImplementation(() => {
         throw new Error("Fail");
       });
 
-      const res = await request(app).delete(`/location/${loc.locationID}`);
+      const res = await request(app).delete(`/location/${locationId}`);
 
       expect(res.status).toBe(500);
       expect(res.body.message).toBe("Internal server error");

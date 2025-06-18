@@ -1,42 +1,34 @@
-// routing
 import { Express } from "express";
-import { createUserController, loginUserController, verifyUserController } from "./auth.controller";
+import { 
+    createUserController, 
+    loginUserController, 
+    verifyUserController 
+} from "./auth.controller";
 
-const user = (app: Express) => {
-    // route
-    app.route("/auth/register").post(
-        async (req, res, next) => {
-            try {
-                await createUserController(req, res)
-            } catch (error) {
-                next(error)
-            }
-
-        } 
-    )
-
-    // verify user route
-    app.route("/auth/verify").post(
-        async (req, res, next) => {
-            try {
-                await verifyUserController(req, res)
-            } catch (error) {
-                next(error)
-            }
+const authRoutes = (app: Express) => {
+    app.post("/auth/register", async (req, res, next) => {
+        try {
+            await createUserController(req, res);
+        } catch (error) {
+            next(error);
         }
-    )
+    });
 
-    // login route
-    app.route("/auth/login").post(
-        async (req, res, next) => {
-            try {
-                await loginUserController(req, res)
-            } catch (error) {
-                next()
-            }
+    app.post("/auth/verify", async (req, res, next) => {
+        try {
+            await verifyUserController(req, res);
+        } catch (error) {
+            next(error);
         }
+    });
 
-    )
-}
+    app.post("/auth/login", async (req, res, next) => {
+        try {
+            await loginUserController(req, res);
+        } catch (error) {
+            next(error);
+        }
+    });
+};
 
-export default user;
+export default authRoutes;

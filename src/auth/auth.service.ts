@@ -1,12 +1,14 @@
-// Database
 import { sql } from "drizzle-orm";
 import db from "../Drizzle/db";
-import { TIUser, UsersTable } from "../Drizzle/schema";
+import { UsersTable } from "../Drizzle/schema";
+import { TIUser } from "../Drizzle/schema";
 
 export const createUserService = async (user: TIUser) => {
-    await db.insert(UsersTable).values(user)
-    return "User created successfully";
-}
+    const [createdUser] = await db.insert(UsersTable)
+        .values(user)
+        .returning();
+    return createdUser;
+};
 
 export const getUserByEmailService = async (email: string) => {
     return await db.query.UsersTable.findFirst({
@@ -15,25 +17,25 @@ export const getUserByEmailService = async (email: string) => {
 };
 
 export const verifyUserService = async (email: string) => {
-    await db.update(UsersTable)
+    const [updatedUser] = await db.update(UsersTable)
         .set({ isVerified: true, verificationCode: null })
-        .where(sql`${UsersTable.email} = ${email}`);
-}
+        .where(sql`${UsersTable.email} = ${email}`)
+        .returning();
+    return updatedUser;
+};
 
-
-//login a user
-export const userLoginService = async (user: TIUser) => {
-    // email and password
-    const { email } = user;
-
+export const userLoginService = async (email: string) => {
     return await db.query.UsersTable.findFirst({
+        where: sql`${UsersTable.email} = ${email}`,
         columns: {
             id: true,
             firstName: true,
             lastName: true,
             email: true,
             password: true,
-            role: true
-        }, where: sql`${UsersTable.email} = ${email} `
-    })
-}
+            role: true,
+            isVerified: true,
+            verificationCode: true
+        }
+    });
+};
