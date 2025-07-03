@@ -18,11 +18,16 @@ dotenv.config();
 const initializeApp = () => {
   const app = express();
 
+  // ✅ Updated CORS configuration
+  app.use(cors({
+    origin: "http://localhost:5173", // frontend dev URL
+    credentials: true,              // allows cookies & authorization headers
+  }));
+
   // Middleware
-  app.use(cors()); // Enable CORS
   app.use(express.json());
 
-  // Health & root routes
+  // Health check
   app.get("/", (req, res) => {
     res.send("hello");
   });
@@ -31,7 +36,7 @@ const initializeApp = () => {
     res.status(200).send("Server is healthy");
   });
 
-  // Register modular routes
+  // Register routes
   maintenance(app);
   booking(app);
   payment(app);
